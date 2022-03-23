@@ -1,0 +1,24 @@
+{
+  "name": "pro-lab-profile-fixer",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Lukáš Drahník <ldrahnik@gmail.com>",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pro-oc/pro-lab-profile-fixer.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pro-oc/pro-lab-profile-fixer/issues"
+  },
+  "homepage": "https://github.com/pro-oc/pro-lab-profile-fixer#readme",
+  "engines": {
+    "node": "14.x"
+  }
+}
