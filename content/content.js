@@ -247,12 +247,17 @@ function getHtmlLaboratorDetail(url, callback) {
     });
 }
 
-/*function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, RequestVerificationTokenElement) {
+function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, Stat, RequestVerificationTokenElement) {
     var urlParams = new URLSearchParams();
-    urlParams.set("DatumNarozeni", DatumNarozeni);
-    urlParams.set("__RequestVerificationToken", RequestVerificationTokenElement)
+    if(DatumNarozeni) {
+        urlParams.set("LabUdaje.DatumNarozeni", DatumNarozeni);
+    }
+    if(Stat) {
+        urlParams.set("LabUdaje.Stat", Stat);
+    }
+    urlParams.set("__RequestVerificationToken", RequestVerificationTokenElement);
     return urlParams;
-}*/
+}
 
 function addToConsole(text) {
     var ConsoleElement = document.getElementById(CONSOLE);
@@ -406,7 +411,7 @@ function getPocetChybiCisloPacientaButton() {
     var aElement = document.createElement("a");
     aElement.setAttribute("class", "button-action ui-button ui-corner-all ui-widget");
     aElement.setAttribute("role", "button");
-    aElement.innerText = "Načti";
+    aElement.innerText = "Načti a oprav";
     aElement.addEventListener('click', function() {
 
         var vysetreniDetailsIndex = 0;
@@ -426,8 +431,8 @@ function getPocetChybiCisloPacientaButton() {
         var PocetPozitivnichTextElement = document.getElementById(POCET_POZITIVNICH);
         PocetPozitivnichTextElement.innerText = 0;
 
-        aElement.innerText = "Probíhá načítání. Nezavírejte tuto stránku. Dokončeno: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
-        alert("Bude probíhat načítání všech vyšetření bez Čísla pacienta. Pro úspěšné dokončení načítání neopouštějte tuto stránku.");
+        aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
+        alert("Bude probíhat načítání všech vyšetření a také automatické opravy.");
 
         vysetreniDetailsAElements.forEach(function (element) {
 
@@ -435,9 +440,9 @@ function getPocetChybiCisloPacientaButton() {
 
             // only testing purpose
             /*const element = {
-                href: "/Registr/ISIN/Laborator/Detail/?id=26736242"
+                href: "/Registr/ISIN/Laborator/Detail/?id=26736356"
             }
-            const LabPripadId = "26736242"; // češka negativní */
+            const LabPripadId = "26736356";*/
 
             getHtmlLaboratorDetail(element.href, function(html) {
                 var results = getInfoFromHtmlLaboratorDetail(html);
@@ -474,10 +479,10 @@ function getPocetChybiCisloPacientaButton() {
 
                                     // end condition here, because is slowest request (last finished)
                                     vysetreniDetailsIndex++;
-                                    aElement.innerText = "Probíhá načítání. Nezavírejte tuto stránku. Načteno: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
-                                  
+                                    aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
+
                                     if(vysetreniDetailsIndex == vysetreniDetailsAElements.length) {
-                                        aElement.innerText = "Načti znovu";
+                                        aElement.innerText = "Znovu načti a oprav";
                                         alert("Načítání dokončeno.");
                                     }
                                 });
@@ -486,10 +491,10 @@ function getPocetChybiCisloPacientaButton() {
 
                                 // end condition here, because is slowest request (last finished)
                                 vysetreniDetailsIndex++;
-                                aElement.innerText = "Probíhá načítání. Nezavírejte tuto stránku. Načteno: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
-                                                                  
+                                aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
+
                                 if(vysetreniDetailsIndex == vysetreniDetailsAElements.length) {
-                                    aElement.innerText = "Načti znovu";
+                                    aElement.innerText = "Znovu načti a oprav";
                                     alert("Načítání dokončeno.");
                                 }
                             }
@@ -499,10 +504,10 @@ function getPocetChybiCisloPacientaButton() {
 
                             // end condition here, because is slowest request (last finished)
                             vysetreniDetailsIndex++;
-                            aElement.innerText = "Probíhá načítání. Nezavírejte tuto stránku. Načteno: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
-                                                                                              
+                            aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
+
                             if(vysetreniDetailsIndex == vysetreniDetailsAElements.length) {
-                                aElement.innerText = "Načti znovu";
+                                aElement.innerText = "Znovu načti a oprav";
                                 alert("Načítání dokončeno.");
                             }
                         }
@@ -510,13 +515,27 @@ function getPocetChybiCisloPacientaButton() {
                         if(results.Stat.split("-")[0].trim() != zadankaData.TestovanyNarodnostKod) {
 
                             PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
-                            addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + results.ICP);
+
+                            editVysetreni(results.EditLink, null, zadankaData.TestovanyNarodnostKod, function(result) {
+                                if(result) {
+                                    addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + results.ICP + ", Oprava: úspěšná.");
+                                } else {
+                                    addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + results.ICP + ", Oprava: neúspěšná.");
+                                }
+                            });
                         }
 
                         if(results.DatumNarozeni.replaceAll(" ", "") != zadankaData.TestovanyDatumNarozeniText) {
 
                             PocetSpatneDatumNarozeniPacientaTextElement.innerText = parseInt(PocetSpatneDatumNarozeniPacientaTextElement.innerText) + 1;
-                            addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + results.ICP);
+
+                            editVysetreni(results.EditLink, zadankaData.TestovanyDatumNarozeniText, null, function(result) {
+                                if(result) {
+                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + results.ICP + ", Oprava: úspěšná.");
+                                } else {
+                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + results.ICP + ", Oprava: neúspěšná.");
+                                }
+                            });
                         }
                     }
                 });
@@ -532,6 +551,52 @@ function getPocetChybiCisloPacientaButton() {
     fieldGraphicElement.appendChild(aElement);
 
     return fieldGraphicElement;
+}
+
+function editVysetreni(url, DatumNarozeni, Stat, callback) {
+    fetch(url, {
+        method: 'get'
+    })
+    .then(function(response) {
+        if (response.status == 200) {
+            response.text().then(function(text) {
+                var parser = new DOMParser();
+                var responseDocument = parser.parseFromString(text, "text/html");
+                var requestVerificationTokenElement = responseDocument.querySelector("[name*='RequestVerificationToken']");
+
+                if(!requestVerificationTokenElement) {
+                    callback(false);
+                }
+                var urlParams = getRegistrISINLaboratorUpravitUrlParams(
+                    DatumNarozeni,
+                    Stat,
+                    requestVerificationTokenElement.value
+                );
+                fetch(url + "?" + urlParams.toString(), {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: urlParams.toString()
+                })
+                .then(function (response) {
+                    if(response.status == 200) {
+                        callback(true);
+                    } else {
+                        callback(false);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            });
+        } else {
+            return;
+        }
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
 }
 
 function isFoundCertificateOnProfile(ZadankaData, CisloPacienta, KoloOprav) {

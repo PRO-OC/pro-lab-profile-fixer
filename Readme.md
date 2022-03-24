@@ -10,3 +10,8 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 
 - je nutné být přihlášen do modulu Covid-19 s rolí Vakcinace
 - je nutné být přihlášen do registru Žádanky Covid-19
+
+# Automaticky prováděné opravy
+
+- vložení datumu narození do vyšetření ze žádanky
+- vložení státní příslušnosti do vyšetření ze žádance
