@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if(msg.text === 'GetZadankaData' && msg.data.CisloZadanky) {
-        getZadankaData(msg.data.CisloZadanky, function(result) {
+    if(msg.text === 'GetZadankaData' && (msg.data.CisloZadanky || msg.data.CisloPojistence)) {
+        getZadankaData(msg.data.CisloZadanky, msg.data.CisloPojistence, function(result) {
             sendResponse(result);
         });
     }
@@ -23,17 +23,22 @@ function getRegistrLoginCookies(callback) {
     });
 }
 
-function getRegistrCUDOvereniCisloZadankyUrlParams(kodOsoby, heslo, cisloZadanky) {
+function getRegistrCUDOvereniCisloZadankyUrlParams(kodOsoby, heslo, cisloZadanky, cisloPojistence) {
     var urlParams = new URLSearchParams();
 
     urlParams.set("PracovnikKodOsoby", kodOsoby);
     urlParams.set("heslo", heslo);
-    urlParams.set("Cislo", cisloZadanky);
+    if(parseInt(cisloZadanky) > 0) {
+        urlParams.set("Cislo", cisloZadanky);
+    }
+    if(parseInt(cisloPojistence) > 0) {
+        urlParams.set("TestovanyCisloPojistence", cisloPojistence);
+    }
 
     return urlParams;
 }
 
-function getZadankaData(cisloZadanky, callback) {
+function getZadankaData(cisloZadanky, cisloPojistence, callback) {
 
     getRegistrLoginCookies(function(cookieParams) {
 
@@ -46,7 +51,7 @@ function getZadankaData(cisloZadanky, callback) {
 
         getRegistrCUDOvereniCisloZadankyUrl(function(url) {
 
-            var urlParams = getRegistrCUDOvereniCisloZadankyUrlParams(kodOsoby, heslo, cisloZadanky);
+            var urlParams = getRegistrCUDOvereniCisloZadankyUrlParams(kodOsoby, heslo, cisloZadanky, cisloPojistence);
 
             fetch(url + "?" + urlParams.toString(), {
                 method: 'get',

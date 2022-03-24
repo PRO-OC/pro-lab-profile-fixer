@@ -7,8 +7,35 @@ const POCET_SPATNA_STATNI_PRISLUSNOST = "Hlavicka_Spatna_Statni_Prislusnost";
 const CONSOLE = "Console";
 const POCET_NEBYLO_MOZNE_OVERIT_CERTIFIKAT_NA_PROFILU = "Hlavicka_Nebylo_Mozne_Overit_Certifikat_Na_Profilu";
 const POCET_POZITIVNICH = "Hlavicka_Pocet_Pozitivnich";
+const POCET_CHYBI_CISLO_ZADANKY = "Hlavicka_Chybejici_Cislo_Zadanky";
 
 const IsLaboratorDavkyDetailUrl = window.location.href.includes("/LaboratorDavky/Detail");
+
+function getPocetChybiCisloZadankyText() {
+    var fieldGraphicElement = document.createElement("div");
+    fieldGraphicElement.setAttribute("class", "fieldGraphic col-1");
+
+    var labelElement = document.createElement("label");
+    labelElement.setAttribute("class", "popisekPole");
+    labelElement.setAttribute("for", POCET_CHYBI_CISLO_ZADANKY);
+    labelElement.innerText = "PocetChybiCisloZadanky";
+
+    fieldGraphicElement.appendChild(labelElement);
+
+    var divElement = document.createElement("div");
+    divElement.setAttribute("class", "textField");
+    divElement.setAttribute("id", POCET_CHYBI_CISLO_ZADANKY);
+    divElement.innerText = "neznámo";
+
+    fieldGraphicElement.appendChild(divElement);
+
+    var divClearElement = document.createElement("div");
+    divClearElement.setAttribute("class", "clear");
+
+    fieldGraphicElement.appendChild(divClearElement);
+
+    return fieldGraphicElement;
+}
 
 function getPocetSpatnaStatniPrislusnostText() {
     var fieldGraphicElement = document.createElement("div");
@@ -188,7 +215,8 @@ function getInfoFromHtmlLaboratorDetail(html) {
     var results = {
         CisloPacienta: undefined,
         DatumNarozeni: undefined,
-        CisloZadanky: undefined,
+        RodneCislo: undefined,
+        CisloPojistence: undefined,
         ICP: undefined,
         Datum1Odberu: undefined,
         Vysledek: undefined,
@@ -218,6 +246,9 @@ function getInfoFromHtmlLaboratorDetail(html) {
                 break;
             case 'LabUdaje_Stat':
                 results.Stat = labels[i].nextElementSibling.innerHTML.trim();
+                break;
+            case 'LabUdaje_RodneCislo':
+                results.RodneCislo = labels[i].nextElementSibling.innerHTML.trim();
                 break;
         }
     }
@@ -430,6 +461,8 @@ function getPocetChybiCisloPacientaButton() {
         PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText = 0;
         var PocetPozitivnichTextElement = document.getElementById(POCET_POZITIVNICH);
         PocetPozitivnichTextElement.innerText = 0;
+        var PocetChybiCisloZadankyTextElement = document.getElementById(POCET_CHYBI_CISLO_ZADANKY);
+        PocetChybiCisloZadankyTextElement.innerText = 0;
 
         aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
         alert("Bude probíhat načítání všech vyšetření a také automatické opravy.");
@@ -450,7 +483,8 @@ function getPocetChybiCisloPacientaButton() {
                 chrome.runtime.sendMessage({
                     "text": "GetZadankaData",
                     "data": {
-                        "CisloZadanky": results.CisloZadanky
+                        "CisloZadanky": results.CisloZadanky,
+                        "CisloPojistence": results.RodneCislo
                     }
                 }, function (zadankaData) {
                     if(!zadankaData) {
@@ -510,6 +544,11 @@ function getPocetChybiCisloPacientaButton() {
                                 aElement.innerText = "Znovu načti a oprav";
                                 alert("Načítání dokončeno.");
                             }
+                        }
+
+                        if(!(parseInt(results.CisloZadanky) > 0)) {
+                            PocetChybiCisloZadankyTextElement.innerText = parseInt(PocetChybiCisloZadankyTextElement.innerText) + 1;
+                            addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + "," + element.href + ", ICP: " + results.ICP);
                         }
 
                         if(results.Stat.split("-")[0].trim() != zadankaData.TestovanyNarodnostKod) {
@@ -632,6 +671,8 @@ if(headerFieldsetDivElement && IsLaboratorDavkyDetailUrl) {
 
     var fieldGraphicPocetChybiCisloPacientaTextElement = getPocetChybiCisloPacientaText();
     headerFieldsetDivElement.appendChild(fieldGraphicPocetChybiCisloPacientaTextElement);
+    var fieldGraphicPocetChybiCisloZadankyElement = getPocetChybiCisloZadankyText();
+    headerFieldsetDivElement.appendChild(fieldGraphicPocetChybiCisloZadankyElement);
     var fieldGraphicPocetSpatneDatumNarozeniTextElement = getPocetSpatneDatumNarozeniText();
     headerFieldsetDivElement.appendChild(fieldGraphicPocetSpatneDatumNarozeniTextElement);
     var fieldGraphicPocetSpatnaStatniPrislusnostTextElement = getPocetSpatnaStatniPrislusnostText();
