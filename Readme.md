@@ -2,7 +2,7 @@
 
 [Rozšíření do Mozilla Firefox](https://addons.mozilla.org/addon/pro-lab-profile-fixer)
 
-Rozšíření do prohlížeče přidává do ISIN možnost kontrolu všech vyšetření, report nalezených nesrovnalostí a jejich částečnou automatickou opravu.
+Rozšíření do prohlížeče s cílem přidat k laboratorní dávce do ISIN možnost kontroly všech vyšetření, které obsahuje, zobrazení reportu nalezených nesrovnalostí a automatickou opravu většiny z nich.
 
 ![Preview](preview/nahled.png)
 
