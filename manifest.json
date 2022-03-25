@@ -1,6 +1,6 @@
 {
     "name": "PRO LAB Profile fixer",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "author": "Lukáš Drahník <ldrahnik@gmail.com>",
     "manifest_version": 3,
     "description": "Rozšíření do prohlížeče přidává do ISIN možnost kontrolu všech vyšetření, report nalezených nesrovnalostí a jejich částečnou automatickou opravu.",
