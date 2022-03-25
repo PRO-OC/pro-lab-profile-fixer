@@ -17,11 +17,11 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 
 - neshoda datumu narození na žádance a ve vyšetření (řešení: vložení datumu narození do vyšetření ze žádanky)
 - neshoda státní příslušnosti na žádance a ve vyšetření (řešení: vložení státní příslušnosti do vyšetření ze žádance)
+- ve vyšetření chybí / je zadaná 0 místo čísla žádanky (řešení: dohledá podle uvedeného čísla pojištěnce žádanku a pokud odpovídá typ testu a stejný den prvního odběru vzorku, vloží číslo žádanky do vyšetření)
 
 # Pouze reportuje
 
-- ve vyšetření chybí číslo pacienta
-- ve vyšetření chybí číslo žádanky
-- chybí certifikát na profilu (automatické opravy zmíněné výše můžou toto opravit, generování certifikátu chvilku trvá)
+- ve vyšetření chybí číslo pacienta (automatické opravy zmíněné výše mohou toto opravit, automatické dohledání profilu pacienta chvilku trvá)
+- chybí certifikát na profilu (automatické opravy zmíněné výše mohou toto opravit, automatické generování certifikátu na profil pacienta chvilku trvá)
 - nebylo možné ověřit certifikát na profilu (typicky, protože existuje více profilů a tím pádem se nepodařilo otevřít ani jeden, protože systém žádá o upřesnění zadaných údajů)
 - počet vyšetření s pozitivním výsledkem (neověřuje se pro ně certifikát na profilu, protože certifikát z testu se pro pozitivní vyšetření negeneruje, generuje se po x dnech pouze certifikát o prodělané nemoci)

@@ -220,7 +220,8 @@ function getInfoFromHtmlLaboratorDetail(html) {
         ICP: undefined,
         Datum1Odberu: undefined,
         Vysledek: undefined,
-        Stat: undefined
+        Stat: undefined,
+        Metoda: undefined
     };
 
     var labels = responseDocument.getElementsByTagName('label');
@@ -250,6 +251,9 @@ function getInfoFromHtmlLaboratorDetail(html) {
             case 'LabUdaje_RodneCislo':
                 results.RodneCislo = labels[i].nextElementSibling.innerHTML.trim();
                 break;
+            case 'LabZelena_MetodaUpresneniId':
+                results.Metoda = labels[i].nextElementSibling.innerHTML.trim();
+                break;
         }
     }
 
@@ -278,13 +282,16 @@ function getHtmlLaboratorDetail(url, callback) {
     });
 }
 
-function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, Stat, RequestVerificationTokenElement) {
+function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, Stat, CisloZadanky, RequestVerificationTokenElement) {
     var urlParams = new URLSearchParams();
     if(DatumNarozeni) {
         urlParams.set("LabUdaje.DatumNarozeni", DatumNarozeni);
     }
     if(Stat) {
         urlParams.set("LabUdaje.Stat", Stat);
+    }
+    if(CisloZadanky) {
+        urlParams.set("LabPripad.CisloZadanky", CisloZadanky);
     }
     urlParams.set("__RequestVerificationToken", RequestVerificationTokenElement);
     return urlParams;
@@ -473,9 +480,9 @@ function getPocetChybiCisloPacientaButton() {
 
             // only testing purpose
             /*const element = {
-                href: "/Registr/ISIN/Laborator/Detail/?id=26736356"
+                href: "/Registr/ISIN/Laborator/Detail/?id=26596977"
             }
-            const LabPripadId = "26736356";*/
+            const LabPripadId = "26596977";*/
 
             getHtmlLaboratorDetail(element.href, function(html) {
                 var results = getInfoFromHtmlLaboratorDetail(html);
@@ -548,14 +555,35 @@ function getPocetChybiCisloPacientaButton() {
 
                         if(!(parseInt(results.CisloZadanky) > 0)) {
                             PocetChybiCisloZadankyTextElement.innerText = parseInt(PocetChybiCisloZadankyTextElement.innerText) + 1;
-                            addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + "," + element.href + ", ICP: " + results.ICP);
+
+                            var Datum1OdberuDate = datumOdberuVysetreniToDate(results.Datum1Odberu)
+                            var Datum1PotvrzeniOdberuDate = new Date(zadankaData.PotvrzeniOdberu[0].DatumPotvrzeni);
+
+                            if(
+                                zadankaData.Cislo &&
+                                zadankaData.TypTestuKod == "PCR" &&
+                                zadankaData.PotvrzeniOdberu[0] &&
+                                Datum1PotvrzeniOdberuDate.getDate() == Datum1OdberuDate.getDate() &&
+                                Datum1PotvrzeniOdberuDate.getMonth() == Datum1OdberuDate.getMonth() &&
+                                Datum1PotvrzeniOdberuDate.getFullYear() == Datum1OdberuDate.getFullYear()
+                            ) {
+                                editVysetreni(results.EditLink, null, null, zadankaData.Cislo, function(result) {
+                                    if(result) {
+                                        addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + ", ICP: " + results.ICP + ", Oprava: úspěšná.");
+                                    } else {
+                                        addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + ", ICP: " + results.ICP + ", Oprava: neúspěšná.");
+                                    }
+                                });
+                            } else {
+                                addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + "," + element.href + ", ICP: " + results.ICP);
+                            }
                         }
 
                         if(results.Stat.split("-")[0].trim() != zadankaData.TestovanyNarodnostKod) {
 
                             PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
 
-                            editVysetreni(results.EditLink, null, zadankaData.TestovanyNarodnostKod, function(result) {
+                            editVysetreni(results.EditLink, null, zadankaData.TestovanyNarodnostKod, null, function(result) {
                                 if(result) {
                                     addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + results.ICP + ", Oprava: úspěšná.");
                                 } else {
@@ -568,7 +596,7 @@ function getPocetChybiCisloPacientaButton() {
 
                             PocetSpatneDatumNarozeniPacientaTextElement.innerText = parseInt(PocetSpatneDatumNarozeniPacientaTextElement.innerText) + 1;
 
-                            editVysetreni(results.EditLink, zadankaData.TestovanyDatumNarozeniText, null, function(result) {
+                            editVysetreni(results.EditLink, zadankaData.TestovanyDatumNarozeniText, null, null, function(result) {
                                 if(result) {
                                     addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + "," + element.href + ", Vysetreni: " + results.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + results.ICP + ", Oprava: úspěšná.");
                                 } else {
@@ -592,7 +620,15 @@ function getPocetChybiCisloPacientaButton() {
     return fieldGraphicElement;
 }
 
-function editVysetreni(url, DatumNarozeni, Stat, callback) {
+function datumOdberuVysetreniToDate(Datum1Odberu) {
+    var Datum1Odberu = Datum1Odberu.split(" ");
+    var day = Datum1Odberu[0];
+    var month = Datum1Odberu[1];
+    var year = Datum1Odberu[2];
+    return new Date(year, month - 1, day);
+}
+
+function editVysetreni(url, DatumNarozeni, Stat, CisloZadanky, callback) {
     fetch(url, {
         method: 'get'
     })
@@ -609,6 +645,7 @@ function editVysetreni(url, DatumNarozeni, Stat, callback) {
                 var urlParams = getRegistrISINLaboratorUpravitUrlParams(
                     DatumNarozeni,
                     Stat,
+                    CisloZadanky,
                     requestVerificationTokenElement.value
                 );
                 fetch(url + "?" + urlParams.toString(), {
@@ -627,6 +664,7 @@ function editVysetreni(url, DatumNarozeni, Stat, callback) {
                 })
                 .catch(function (error) {
                     console.log(error);
+                    callback(false);
                 });
             });
         } else {
