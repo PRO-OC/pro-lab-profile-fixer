@@ -628,38 +628,22 @@ function getPocetChybiCisloPacientaButton() {
                             zadankaData.TestovanyDatumNarozeniText,
                             zadankaData.TestovanyNarodnostKod
                         ) {
+                            tryFindProfileWithSpecificCertElement(zadankaData, laboratorDetailResults.Datum1Odberu, function(resultsProfile) {
 
-                            // pozitivní recovery certifikáty jsou až 10-tý den (v době psaní kódu)
-                            if(laboratorDetailResults.Vysledek.trim() != "Pozitivní") {
-
-                                tryFindProfileWithSpecificCertElement(zadankaData, laboratorDetailResults.Datum1Odberu, function(resultsProfile) {
-
-                                    if(resultsProfile.Cislo) {
-                                        if(resultsProfile.KontrolovanyTest == false) {
-                                            PocetChybiCertifikatNaProfiluTextElement.innerText = parseInt(PocetChybiCertifikatNaProfiluTextElement.innerText) + 1;
-                                            addToConsole("Chybí certifikát na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
-                                        } else if(resultsProfile.KontrolovanyTest == null) {
-                                            PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText = parseInt(PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText) + 1;
-                                            addToConsole("Nebylo možné ověřit certifikát na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
-                                        }
-
-                                        if(laboratorDetailResults.Stat.trim() != "CZ - Česko" && (!resultsProfile.Telefon || !resultsProfile.Email)) {
-                                            PocetChybiPristupoveUdajeTextElement.innerText = parseInt(PocetChybiPristupoveUdajeTextElement.innerText) + 1;
-                                            addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Profil telefon: " + resultsProfile.Telefon + ", ICP: " + laboratorDetailResults.ICP + ".");
-                                        }
+                                if(resultsProfile.Cislo) {
+                                    if(resultsProfile.KontrolovanyTest == false) {
+                                        PocetChybiCertifikatNaProfiluTextElement.innerText = parseInt(PocetChybiCertifikatNaProfiluTextElement.innerText) + 1;
+                                        addToConsole("Chybí certifikát na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
+                                    } else if(resultsProfile.KontrolovanyTest == null) {
+                                        PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText = parseInt(PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText) + 1;
+                                        addToConsole("Nebylo možné ověřit certifikát na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
                                     }
 
-                                    // end condition here, because is slowest request (last finished)
-                                    vysetreniDetailsIndex++;
-                                    aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
-
-                                    if(vysetreniDetailsIndex == vysetreniDetailsAElements.length) {
-                                        aElement.innerText = "Znovu načti a oprav";
-                                        alert("Načítání dokončeno.");
+                                    if(laboratorDetailResults.Stat.trim() != "CZ - Česko" && (!resultsProfile.Telefon || !resultsProfile.Email)) {
+                                        PocetChybiPristupoveUdajeTextElement.innerText = parseInt(PocetChybiPristupoveUdajeTextElement.innerText) + 1;
+                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Profil telefon: " + resultsProfile.Telefon + ", ICP: " + laboratorDetailResults.ICP + ".");
                                     }
-                                });
-                            } else {
-                                PocetPozitivnichTextElement.innerText = parseInt(PocetPozitivnichTextElement.innerText) + 1;
+                                }
 
                                 // end condition here, because is slowest request (last finished)
                                 vysetreniDetailsIndex++;
@@ -669,7 +653,7 @@ function getPocetChybiCisloPacientaButton() {
                                     aElement.innerText = "Znovu načti a oprav";
                                     alert("Načítání dokončeno.");
                                 }
-                            }
+                            });
                         } else {
                             PocetChybiCertifikatNaProfiluTextElement.innerText = parseInt(PocetChybiCertifikatNaProfiluTextElement.innerText) + 1;
                             addToConsole("Chybí certifikát na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
@@ -760,6 +744,10 @@ function getPocetChybiCisloPacientaButton() {
                                     addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                 }
                             });
+                        }
+
+                        if(laboratorDetailResults.Vysledek.trim() == "Pozitivní") {
+                            PocetPozitivnichTextElement.innerText = parseInt(PocetPozitivnichTextElement.innerText) + 1;
                         }
                     }
                 });
