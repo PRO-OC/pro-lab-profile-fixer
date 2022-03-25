@@ -519,15 +519,15 @@ function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback
     //  2. Zkusit najít podle 1 údaje, číslo pojištěnce
     //  3. a 4. Zkusit teprve pak pomocí datumu narození a státní příslušnosti
     existsCertElement(searchVariantJmenoPrijmeniRC, datumTestu, function(results1) {
-        if(results1.Cislo) {
+        if(results1.KontrolovanyTest) {
             callback(results1);
         } else {
             existsCertElement(searchVariantCizinecCisloPojistence, datumTestu, function(results2) {
-                if(results2.Cislo) {
+                if(results2.KontrolovanyTest) {
                     callback(results2);
                 } else {
                     existsCertElement(searchVariantJmenoPrijmeniDatumNarozeniMistoNarozeni, datumTestu, function(results3) {
-                        if(results3.Cislo) {
+                        if(results3.KontrolovanyTest) {
                             callback(results3);
                         } else {
                             existsCertElement(searchVariantCizinecJmenoPrijmeniDatumNarozniObcanstvi, datumTestu, function(results4) {
@@ -596,11 +596,6 @@ function getPocetChybiCisloPacientaButton() {
             }
             const LabPripadId = "26790843";*/
 
-            //
-            // Fixme: prohledávat všechny profily:
-            // 
-            // do pole a podívat se poté, jestli neni certifikát alespoň na jednom a ten profil vybrat a vrátit v callbacku
-            //
             // Fixme upravovat státní příslušnost na profilu:
             //
             // labId: 26790758 (má evidentně Ruskou i Českou státní příslušnost - kontrola prošla)
