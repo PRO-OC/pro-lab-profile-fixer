@@ -17,6 +17,7 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 
 - neshoda datumu narození na žádance a ve vyšetření (řešení: vložení datumu narození do vyšetření ze žádanky)
 - neshoda státní příslušnosti na žádance a ve vyšetření (řešení: vložení státní příslušnosti do vyšetření ze žádanky)
+- neshoda jména a přijmení (typickým důvodem zkracování při zasílání dávky) (řešení: vložení jména a příjmení do vyšetření ze žádanky)
 - ve vyšetření chybí / je zadaná 0 místo čísla žádanky (řešení: dohledá podle uvedeného čísla pojištěnce žádanku a pokud odpovídá typ testu a stejný den prvního odběru vzorku, vloží číslo žádanky do vyšetření)
 
 # Pouze reportuje

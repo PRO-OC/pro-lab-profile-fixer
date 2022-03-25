@@ -9,8 +9,62 @@ const POCET_NEBYLO_MOZNE_OVERIT_CERTIFIKAT_NA_PROFILU = "Hlavicka_Nebylo_Mozne_O
 const POCET_POZITIVNICH = "Hlavicka_Pocet_Pozitivnich";
 const POCET_CHYBI_CISLO_ZADANKY = "Hlavicka_Chybejici_Cislo_Zadanky";
 const POCET_CHYBI_PRISTUPOVE_UDAJE = "HLavicka_Chybejici_Pristupove_Udaje_Cizinec";
+const POCET_SPATNE_JMENO = "Hlavicka_Spatne_Jmeno";
+const POCET_SPATNE_PRIJMENI = "Hlavicka_Spatne_Prijmeni";
 
 const IsLaboratorDavkyDetailUrl = window.location.href.includes("/LaboratorDavky/Detail");
+
+function getSpatnePrijmeniText() {
+    var fieldGraphicElement = document.createElement("div");
+    fieldGraphicElement.setAttribute("class", "fieldGraphic col-1");
+
+    var labelElement = document.createElement("label");
+    labelElement.setAttribute("class", "popisekPole");
+    labelElement.setAttribute("for", POCET_SPATNE_PRIJMENI);
+    labelElement.innerText = "PocetSpatnePrijmeniPacienta";
+
+    fieldGraphicElement.appendChild(labelElement);
+
+    var divElement = document.createElement("div");
+    divElement.setAttribute("class", "textField");
+    divElement.setAttribute("id", POCET_SPATNE_PRIJMENI);
+    divElement.innerText = "neznámo";
+
+    fieldGraphicElement.appendChild(divElement);
+
+    var divClearElement = document.createElement("div");
+    divClearElement.setAttribute("class", "clear");
+
+    fieldGraphicElement.appendChild(divClearElement);
+
+    return fieldGraphicElement;
+}
+
+function getSpatneJmenoText() {
+    var fieldGraphicElement = document.createElement("div");
+    fieldGraphicElement.setAttribute("class", "fieldGraphic col-1");
+
+    var labelElement = document.createElement("label");
+    labelElement.setAttribute("class", "popisekPole");
+    labelElement.setAttribute("for", POCET_SPATNE_JMENO);
+    labelElement.innerText = "PocetSpatneJmenoPacienta";
+
+    fieldGraphicElement.appendChild(labelElement);
+
+    var divElement = document.createElement("div");
+    divElement.setAttribute("class", "textField");
+    divElement.setAttribute("id", POCET_SPATNE_JMENO);
+    divElement.innerText = "neznámo";
+
+    fieldGraphicElement.appendChild(divElement);
+
+    var divClearElement = document.createElement("div");
+    divClearElement.setAttribute("class", "clear");
+
+    fieldGraphicElement.appendChild(divClearElement);
+
+    return fieldGraphicElement;
+}
 
 function getPocetChybiPristupoveUdajeText() {
     var fieldGraphicElement = document.createElement("div");
@@ -245,7 +299,9 @@ function getInfoFromHtmlLaboratorDetail(html) {
         Datum1Odberu: undefined,
         Vysledek: undefined,
         Stat: undefined,
-        Metoda: undefined
+        Metoda: undefined,
+        Jmeno: undefined,
+        Prijmeni: undefined
     };
 
     var labels = responseDocument.getElementsByTagName('label');
@@ -278,6 +334,12 @@ function getInfoFromHtmlLaboratorDetail(html) {
             case 'LabZelena_MetodaUpresneniId':
                 results.Metoda = labels[i].nextElementSibling.innerHTML.trim();
                 break;
+            case 'LabUdaje_Jmeno':
+                results.Jmeno = labels[i].nextElementSibling.innerHTML.trim();
+                break;
+            case 'LabUdaje_Prijmeni':
+                results.Prijmeni = labels[i].nextElementSibling.innerHTML.trim();
+                break;
         }
     }
 
@@ -306,7 +368,7 @@ function getHtmlLaboratorDetail(url, callback) {
     });
 }
 
-function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, Stat, CisloZadanky, RequestVerificationTokenElement) {
+function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, Stat, CisloZadanky, Jmeno, Prijmeni, RequestVerificationTokenElement) {
     var urlParams = new URLSearchParams();
     if(DatumNarozeni) {
         urlParams.set("LabUdaje.DatumNarozeni", DatumNarozeni);
@@ -316,6 +378,12 @@ function getRegistrISINLaboratorUpravitUrlParams(DatumNarozeni, Stat, CisloZadan
     }
     if(CisloZadanky) {
         urlParams.set("LabPripad.CisloZadanky", CisloZadanky);
+    }
+    if(Jmeno) {
+        urlParams.set("LabUdaje.Jmeno", Jmeno);
+    }
+    if(Prijmeni) {
+        urlParams.set("LabUdaje.Prijmeni", Prijmeni);
     }
     urlParams.set("__RequestVerificationToken", RequestVerificationTokenElement);
     return urlParams;
@@ -416,7 +484,7 @@ function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback
         Jmeno: ZadankaData.TestovanyJmeno,
         Prijmeni: ZadankaData.TestovanyPrijmeni,
         CisloPojistence: ZadankaData.TestovanyCisloPojistence,
-        StatniPrislusnost: ZadankaData.TestovanyNarodnostKod,
+        StatniPrislusnost: "CZ",
         TypVyhledani: "JmenoPrijmeniRC"
     };
 
@@ -446,11 +514,15 @@ function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback
         TypVyhledani: "CizinecCisloPojistence"
     };
 
+    // Na prioritách záleží:
+    //  1. Zkusit, zda není čech
+    //  2. Zkusit najít podle 1 údaje, číslo pojištěnce
+    //  3. a 4. Zkusit teprve pak pomocí datumu narození a státní příslušnosti
     existsCertElement(searchVariantJmenoPrijmeniRC, datumTestu, function(results1) {
         if(results1.Cislo) {
             callback(results1);
         } else {
-            existsCertElement(searchVariantCizinecJmenoPrijmeniDatumNarozniObcanstvi, datumTestu, function(results2) {
+            existsCertElement(searchVariantCizinecCisloPojistence, datumTestu, function(results2) {
                 if(results2.Cislo) {
                     callback(results2);
                 } else {
@@ -458,7 +530,7 @@ function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback
                         if(results3.Cislo) {
                             callback(results3);
                         } else {
-                            existsCertElement(searchVariantCizinecCisloPojistence, datumTestu, function(results4) {
+                            existsCertElement(searchVariantCizinecJmenoPrijmeniDatumNarozniObcanstvi, datumTestu, function(results4) {
                                 callback(results4);
                             });
                         }
@@ -506,6 +578,10 @@ function getPocetChybiCisloPacientaButton() {
         PocetChybiCisloZadankyTextElement.innerText = 0;
         var PocetChybiPristupoveUdajeTextElement = document.getElementById(POCET_CHYBI_PRISTUPOVE_UDAJE);
         PocetChybiPristupoveUdajeTextElement.innerText = 0;
+        var PocetSpatneJmenoPacientaTextElement = document.getElementById(POCET_SPATNE_JMENO);
+        PocetSpatneJmenoPacientaTextElement.innerText = 0;
+        var PocetSpatnePrijmeniPacientaTextElement = document.getElementById(POCET_SPATNE_PRIJMENI);
+        PocetSpatnePrijmeniPacientaTextElement.innerText = 0;
 
         aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
         alert("Bude probíhat načítání všech vyšetření a také automatické opravy.");
@@ -516,9 +592,20 @@ function getPocetChybiCisloPacientaButton() {
 
             // only testing purpose
             /*const element = {
-                href: "/Registr/ISIN/Laborator/Detail/?id=26790876"
+                href: "/Registr/ISIN/Laborator/Detail/?id=26790843"
             }
-            const LabPripadId = "26790876";*/
+            const LabPripadId = "26790843";*/
+
+            //
+            // Fixme: prohledávat všechny profily:
+            // 
+            // do pole a podívat se poté, jestli neni certifikát alespoň na jednom a ten profil vybrat a vrátit v callbacku
+            //
+            // Fixme upravovat státní příslušnost na profilu:
+            //
+            // labId: 26790758 (má evidentně Ruskou i Českou státní příslušnost - kontrola prošla)
+            // mohl bych státní příslušnost ze žádanky / z vyšetření upravit i na profilu, pokud je tam jiná, ale v tom případě, že na profilu je česká a ověření z RoB neprojde a nebo tam česká není, a ověření z RoB projde
+            // https://ereg.ksrzis.cz/Registr/CUDZadanky/Zadanka/ZtotozniRob?testovanyJmeno=xxx&testovanyPrijmeni=yyy&testovanyCisloPojistence=XX&datumNarozeni=YY&stat=CZ
 
             getHtmlLaboratorDetail(element.href, function(html) {
                 var laboratorDetailResults = getInfoFromHtmlLaboratorDetail(html);
@@ -557,7 +644,7 @@ function getPocetChybiCisloPacientaButton() {
                                         }
 
                                         if(laboratorDetailResults.Stat.trim() != "CZ - Česko" && (!resultsProfile.Telefon || !resultsProfile.Email)) {
-                                            PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText = parseInt(PocetNebyloMozneOveritCertifikatNaProfiluTextElement.innerText) + 1;
+                                            PocetChybiPristupoveUdajeTextElement.innerText = parseInt(PocetChybiPristupoveUdajeTextElement.innerText) + 1;
                                             addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Profil telefon: " + resultsProfile.Telefon + ", ICP: " + laboratorDetailResults.ICP + ".");
                                         }
                                     }
@@ -611,7 +698,7 @@ function getPocetChybiCisloPacientaButton() {
                                 Datum1PotvrzeniOdberuDate.getMonth() == Datum1OdberuDate.getMonth() &&
                                 Datum1PotvrzeniOdberuDate.getFullYear() == Datum1OdberuDate.getFullYear()
                             ) {
-                                editVysetreni(laboratorDetailResults.EditLink, null, null, zadankaData.Cislo, function(result) {
+                                editVysetreni(laboratorDetailResults.EditLink, null, null, zadankaData.Cislo, null, null, function(result) {
                                     if(result) {
                                         addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                     } else {
@@ -627,7 +714,7 @@ function getPocetChybiCisloPacientaButton() {
 
                             PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
 
-                            editVysetreni(laboratorDetailResults.EditLink, null, zadankaData.TestovanyNarodnostKod, null, function(result) {
+                            editVysetreni(laboratorDetailResults.EditLink, null, zadankaData.TestovanyNarodnostKod, null, null, null, function(result) {
                                 if(result) {
                                     addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                 } else {
@@ -640,11 +727,37 @@ function getPocetChybiCisloPacientaButton() {
 
                             PocetSpatneDatumNarozeniPacientaTextElement.innerText = parseInt(PocetSpatneDatumNarozeniPacientaTextElement.innerText) + 1;
 
-                            editVysetreni(laboratorDetailResults.EditLink, zadankaData.TestovanyDatumNarozeniText, null, null, function(result) {
+                            editVysetreni(laboratorDetailResults.EditLink, zadankaData.TestovanyDatumNarozeniText, null, null, null, null, function(result) {
                                 if(result) {
                                     addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                 } else {
                                     addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                }
+                            });
+                        }
+
+                        if(laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase()) {
+
+                            PocetSpatneJmenoPacientaTextElement.innerText = parseInt(PocetSpatneJmenoPacientaTextElement.innerText) + 1;
+
+                            editVysetreni(laboratorDetailResults.EditLink, null, null, null, zadankaData.TestovanyJmeno, null, function(result) {
+                                if(result) {
+                                    addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                } else {
+                                    addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                }
+                            });
+                        }
+
+                        if(laboratorDetailResults.Prijmeni.trim().toUpperCase() != zadankaData.TestovanyPrijmeni.toUpperCase()) {
+
+                            PocetSpatnePrijmeniPacientaTextElement.innerText = parseInt(PocetSpatnePrijmeniPacientaTextElement.innerText) + 1;
+
+                            editVysetreni(laboratorDetailResults.EditLink, null, null, null, null, zadankaData.TestovanyPrijmeni, function(result) {
+                                if(result) {
+                                    addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                } else {
+                                    addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                 }
                             });
                         }
@@ -672,7 +785,7 @@ function datumOdberuVysetreniToDate(Datum1Odberu) {
     return new Date(year, month - 1, day);
 }
 
-function editVysetreni(url, DatumNarozeni, Stat, CisloZadanky, callback) {
+function editVysetreni(url, DatumNarozeni, Stat, CisloZadanky, Jmeno, Prijmeni, callback) {
     fetch(url, {
         method: 'get'
     })
@@ -690,6 +803,8 @@ function editVysetreni(url, DatumNarozeni, Stat, CisloZadanky, callback) {
                     DatumNarozeni,
                     Stat,
                     CisloZadanky,
+                    Jmeno,
+                    Prijmeni,
                     requestVerificationTokenElement.value
                 );
                 fetch(url + "?" + urlParams.toString(), {
@@ -757,6 +872,10 @@ if(headerFieldsetDivElement && IsLaboratorDavkyDetailUrl) {
     headerFieldsetDivElement.appendChild(fieldGraphicPocetChybiCisloZadankyElement);
     var fieldGraphicPocetSpatneDatumNarozeniTextElement = getPocetSpatneDatumNarozeniText();
     headerFieldsetDivElement.appendChild(fieldGraphicPocetSpatneDatumNarozeniTextElement);
+    var fieldGraphicPocetSpatneJmenoTextElement = getSpatneJmenoText();
+    headerFieldsetDivElement.appendChild(fieldGraphicPocetSpatneJmenoTextElement);
+    var fieldGraphicPocetSpatnePrijmeniTextElement = getSpatnePrijmeniText();
+    headerFieldsetDivElement.appendChild(fieldGraphicPocetSpatnePrijmeniTextElement);
     var fieldGraphicPocetSpatnaStatniPrislusnostTextElement = getPocetSpatnaStatniPrislusnostText();
     headerFieldsetDivElement.appendChild(fieldGraphicPocetSpatnaStatniPrislusnostTextElement);
     var fieldGraphicPocetChybiCertifikatNaProfiluTextElement = getPocetChybiCertifikatNaProfiluText();
