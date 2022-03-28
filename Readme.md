@@ -28,4 +28,3 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 - ve vyšetření chybí číslo pacienta (automatické opravy zmíněné výše mohou toto opravit, automatické dohledání profilu pacienta chvilku trvá)
 - chybí certifikát na profilu (automatické opravy zmíněné výše mohou toto opravit, automatické generování certifikátu na profil pacienta chvilku trvá)
 - nebylo možné ověřit certifikát na profilu (typicky, protože existuje více profilů a tím pádem se nepodařilo otevřít ani jeden, protože systém žádá o upřesnění zadaných údajů)
-- počet vyšetření s pozitivním výsledkem (neověřuje se pro ně certifikát na profilu, protože certifikát z testu se pro pozitivní vyšetření negeneruje, generuje se po x dnech pouze certifikát o prodělané nemoci)
