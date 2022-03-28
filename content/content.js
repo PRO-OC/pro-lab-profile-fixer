@@ -732,14 +732,14 @@ function getPocetChybiCisloPacientaButton() {
                                                     Mesto,
                                                     Psc,
                                                     function() {
-                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Email + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Telefon + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                                     },
                                                     function() {
-                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Telefon + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                                     }
                                                 );
                                             } else {
-                                                addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", ICP: " + laboratorDetailResults.ICP + ".");
+                                                addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ".");
                                             }
                                         }
                                     }
