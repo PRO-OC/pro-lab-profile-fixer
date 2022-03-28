@@ -301,7 +301,9 @@ function getInfoFromHtmlLaboratorDetail(html) {
         Stat: undefined,
         Metoda: undefined,
         Jmeno: undefined,
-        Prijmeni: undefined
+        Prijmeni: undefined,
+        Mesto: undefined,
+        Psc: undefined
     };
 
     var labels = responseDocument.getElementsByTagName('label');
@@ -339,6 +341,12 @@ function getInfoFromHtmlLaboratorDetail(html) {
                 break;
             case 'LabUdaje_Prijmeni':
                 results.Prijmeni = labels[i].nextElementSibling.innerHTML.trim();
+                break;
+            case 'LabUdaje_Mesto':
+                results.Mesto = labels[i].nextElementSibling.innerHTML.trim();
+                break;
+            case 'LabUdaje_Psc':
+                results.Psc = labels[i].nextElementSibling.innerHTML.trim();
                 break;
         }
     }
@@ -432,6 +440,13 @@ function getRegistrCUDVyhledaniPacientaUrlParams(zadanka) {
 
 function existsCertElement(zadanka, datumTestu, callback) {
 
+    var results = {
+        Cislo: undefined,
+        Telefon: undefined,
+        Email: undefined,
+        KontrolovanyTest: undefined
+    };
+
     var url = getRegistrCUDVyhledaniPacientaUrl();
     var urlParams = getRegistrCUDVyhledaniPacientaUrlParams(zadanka);
 
@@ -439,44 +454,44 @@ function existsCertElement(zadanka, datumTestu, callback) {
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function() {
-        if(xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
+        if(xhr.readyState === XMLHttpRequest.DONE) {
   
-            var parser = new DOMParser();
-            var responseDocument = parser.parseFromString(xhr.responseText, "text/html");
+            if(xhr.status == 200) {
 
-            var results = {
-                Cislo: undefined,
-                Telefon: undefined,
-                Email: undefined,
-                KontrolovanyTest: undefined
-            };
-            
-            var labels = responseDocument.getElementsByTagName('label');
-            for (var i = 0; i < labels.length; i++) {
-                switch(labels[i].htmlFor) {
-                    case 'Pacient_CisloPacienta':
-                        results.Cislo = labels[i].nextElementSibling.innerText.trim();
-                        break;
-                    case 'Pacient_Telefon':
-                        results.Telefon = labels[i].nextElementSibling.innerText.trim();
-                        break;
-                    case 'Pacient_Email':
-                        results.Email = labels[i].nextElementSibling.innerText.trim();
-                        break;
+                var parser = new DOMParser();
+                var responseDocument = parser.parseFromString(xhr.responseText, "text/html");
+          
+                var labels = responseDocument.getElementsByTagName('label');
+                for (var i = 0; i < labels.length; i++) {
+                    switch(labels[i].htmlFor) {
+                        case 'Pacient_CisloPacienta':
+                            results.Cislo = labels[i].nextElementSibling.innerText.trim();
+                            break;
+                        case 'Pacient_Telefon':
+                            results.Telefon = labels[i].nextElementSibling.innerText.trim();
+                            break;
+                        case 'Pacient_Email':
+                            results.Email = labels[i].nextElementSibling.innerText.trim();
+                            break;
+                    }
                 }
-            }
 
-            var certElement = responseDocument.evaluate("//td[contains(., '" + datumTestu + "')]", responseDocument, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-            if(results.Cislo != undefined) { 
-                results.KontrolovanyTest = certElement.snapshotLength ? true : false;
-            }
+                var certElement = responseDocument.evaluate("//td[contains(., '" + datumTestu + "')]", responseDocument, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                if(results.Cislo != undefined) { 
+                    results.KontrolovanyTest = certElement.snapshotLength ? true : false;
+                }
 
-            callback(results);
+                results.Link = xhr.responseURL;
+                results.EditLink = xhr.responseURL.replace("Index", "Edit");
+
+                callback(results);
+            } else {
+                callback(results);
+            }
         }
     }
     xhr.send(urlParams.toString());
 }
-
 
 function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback) {
 
@@ -518,26 +533,66 @@ function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback
     //  1. Zkusit, zda není čech
     //  2. Zkusit najít podle 1 údaje, číslo pojištěnce
     //  3. a 4. Zkusit teprve pak pomocí datumu narození a státní příslušnosti
+
+    var Results = {
+        //Profiles: [],
+        EmailFromOtherProfile: undefined,
+        TelefonFromOtherProfile: undefined,
+        ProfileKontrolovanyTest: undefined
+    };
     existsCertElement(searchVariantJmenoPrijmeniRC, datumTestu, function(results1) {
         if(results1.KontrolovanyTest) {
-            callback(results1);
-        } else {
-            existsCertElement(searchVariantCizinecCisloPojistence, datumTestu, function(results2) {
-                if(results2.KontrolovanyTest) {
-                    callback(results2);
-                } else {
-                    existsCertElement(searchVariantJmenoPrijmeniDatumNarozeniMistoNarozeni, datumTestu, function(results3) {
-                        if(results3.KontrolovanyTest) {
-                            callback(results3);
-                        } else {
-                            existsCertElement(searchVariantCizinecJmenoPrijmeniDatumNarozniObcanstvi, datumTestu, function(results4) {
-                                callback(results4);
-                            });
-                        }
-                    });
-                }
-            });
+            Results.ProfileKontrolovanyTest = results1;
         }
+        if(results1.Email) {
+            Results.EmailFromOtherProfile = results1.Email;
+        }
+        if(results1.Telefon) {
+            Results.TelefonFromOtherProfile = results1.Telefon;
+        }
+        //Results.Profiles.push(results1);
+        existsCertElement(searchVariantCizinecCisloPojistence, datumTestu, function(results2) {
+            if(results2.KontrolovanyTest) {
+                Results.ProfileKontrolovanyTest = results2;
+            }
+            if(results2.Email) {
+                Results.EmailFromOtherProfile = results2.Email;
+            }
+            if(results2.Telefon) {
+                TelefonFromOtherProfile = results2.Telefon;
+            }
+            //Results.Profiles.push(results2);
+            existsCertElement(searchVariantJmenoPrijmeniDatumNarozeniMistoNarozeni, datumTestu, function(results3) {
+                if(results3.KontrolovanyTest) {
+                    Results.ProfileKontrolovanyTest = results3;
+                }
+                if(results3.Email) {
+                    Results.EmailFromOtherProfile = results3.Email;
+                }
+                if(results3.Telefon) {
+                    TelefonFromOtherProfile = results3.Telefon;
+                }
+                //Results.Profiles.push(results3);
+                existsCertElement(searchVariantCizinecJmenoPrijmeniDatumNarozniObcanstvi, datumTestu, function(results4) {
+                    if(results4.KontrolovanyTest) {
+                        Results.ProfileKontrolovanyTest = results4;
+                    }
+                    //Results.Profiles.push(results4);
+                    if(results4.Email) {
+                        Results.EmailFromOtherProfile = results4.Email;
+                    }
+                    if(results4.Telefon) {
+                        Results.TelefonFromOtherProfile = results4.Telefon;
+                    }
+
+                    /*Results.Profiles = Results.Profiles.filter((obj, index, arr) => {
+                       return arr.map(mapObj => mapObj.Cislo).indexOf(obj.Cislo) === index;
+                    });*/
+
+                    callback(Results);
+                });
+            });
+        });
     });
 }
 
@@ -592,9 +647,9 @@ function getPocetChybiCisloPacientaButton() {
 
             // only testing purpose
             /*const element = {
-                href: "/Registr/ISIN/Laborator/Detail/?id=26790843"
+                href: "/Registr/ISIN/Laborator/Detail/?id=26837571"
             }
-            const LabPripadId = "26790843";*/
+            const LabPripadId = "26837571";*/
 
             // Fixme upravovat státní příslušnost na profilu:
             //
@@ -623,9 +678,11 @@ function getPocetChybiCisloPacientaButton() {
                             zadankaData.TestovanyDatumNarozeniText,
                             zadankaData.TestovanyNarodnostKod
                         ) {
-                            tryFindProfileWithSpecificCertElement(zadankaData, laboratorDetailResults.Datum1Odberu, function(resultsProfile) {
+                            tryFindProfileWithSpecificCertElement(zadankaData, laboratorDetailResults.Datum1Odberu, function(results) {
 
-                                if(resultsProfile.Cislo) {
+                                var resultsProfile = results.ProfileKontrolovanyTest;
+
+                                if(resultsProfile && resultsProfile.Cislo) {
                                     if(resultsProfile.KontrolovanyTest == false) {
                                         PocetChybiCertifikatNaProfiluTextElement.innerText = parseInt(PocetChybiCertifikatNaProfiluTextElement.innerText) + 1;
                                         addToConsole("Chybí certifikát na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
@@ -635,8 +692,56 @@ function getPocetChybiCisloPacientaButton() {
                                     }
 
                                     if(laboratorDetailResults.Stat.trim() != "CZ - Česko" && (!resultsProfile.Telefon || !resultsProfile.Email)) {
+
                                         PocetChybiPristupoveUdajeTextElement.innerText = parseInt(PocetChybiPristupoveUdajeTextElement.innerText) + 1;
-                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Profil telefon: " + resultsProfile.Telefon + ", ICP: " + laboratorDetailResults.ICP + ".");
+
+                                        if(!resultsProfile.Email) {
+
+                                            var PojistovnaKod = zadankaData ? zadankaData.TestovanyZdravotniPojistovnaKod : "300";
+                                            var Mesto = zadankaData ? zadankaData.TestovanyMesto : laboratorDetailResults.Mesto && laboratorDetailResults.Mesto.trim() != "Bydliště mimo území ČR" ? laboratorDetailResults.Mesto : "Praha 2";
+                                            var Psc = zadankaData ? zadankaData.TestovanyPsc : laboratorDetailResults.Psc && parseInt(laboratorDetailResults.Psc) != 99999 ? laboratorDetailResults.Psc : "Praha 2";
+
+                                            if(results.EmailFromOtherProfile && results.EmailFromOtherProfile != undefined) {
+                                                editProfile(
+                                                    resultsProfile.EditLink,
+                                                    null,
+                                                    results.EmailFromOtherProfile,
+                                                    PojistovnaKod,
+                                                    Mesto,
+                                                    Psc,
+                                                    function() {
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                    },
+                                                    function() {
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                    }
+                                                );
+                                            } else {
+                                                addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", ICP: " + laboratorDetailResults.ICP + ".");
+                                            }
+                                        }
+
+                                        if(!resultsProfile.Telefon) {
+
+                                            if(results.TelefonFromOtherProfile && results.TelefonFromOtherProfile != undefined) {
+                                                editProfile(
+                                                    resultsProfile.EditLink,
+                                                    results.TelefonFromOtherProfile,
+                                                    null,
+                                                    PojistovnaKod,
+                                                    Mesto,
+                                                    Psc,
+                                                    function() {
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Email + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                    },
+                                                    function() {
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                    }
+                                                );
+                                            } else {
+                                                addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", ICP: " + laboratorDetailResults.ICP + ".");
+                                            }
+                                        }
                                     }
                                 }
 
@@ -667,15 +772,13 @@ function getPocetChybiCisloPacientaButton() {
                             PocetChybiCisloZadankyTextElement.innerText = parseInt(PocetChybiCisloZadankyTextElement.innerText) + 1;
 
                             var Datum1OdberuDate = datumOdberuVysetreniToDate(laboratorDetailResults.Datum1Odberu)
-                            var Datum1PotvrzeniOdberuDate = new Date(zadankaData.PotvrzeniOdberu[0].DatumPotvrzeni);
-
                             if(
                                 zadankaData.Cislo &&
                                 zadankaData.TypTestuKod == "PCR" &&
                                 zadankaData.PotvrzeniOdberu[0] &&
-                                Datum1PotvrzeniOdberuDate.getDate() == Datum1OdberuDate.getDate() &&
-                                Datum1PotvrzeniOdberuDate.getMonth() == Datum1OdberuDate.getMonth() &&
-                                Datum1PotvrzeniOdberuDate.getFullYear() == Datum1OdberuDate.getFullYear()
+                                (new Date(zadankaData.PotvrzeniOdberu[0].DatumPotvrzeni)) == Datum1OdberuDate.getDate() &&
+                                (new Date(zadankaData.PotvrzeniOdberu[0].DatumPotvrzeni)) == Datum1OdberuDate.getMonth() &&
+                                (new Date(zadankaData.PotvrzeniOdberu[0].DatumPotvrzeni)) == Datum1OdberuDate.getFullYear()
                             ) {
                                 editVysetreni(laboratorDetailResults.EditLink, null, null, zadankaData.Cislo, null, null, function(result) {
                                     if(result) {
@@ -689,7 +792,10 @@ function getPocetChybiCisloPacientaButton() {
                             }
                         }
 
-                        if(laboratorDetailResults.Stat.split("-")[0].trim() != zadankaData.TestovanyNarodnostKod) {
+                        if(
+                            zadankaData.TestovanyNarodnostKod &&
+                            laboratorDetailResults.Stat.split("-")[0].trim() != zadankaData.TestovanyNarodnostKod
+                        ) {
 
                             PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
 
@@ -702,7 +808,10 @@ function getPocetChybiCisloPacientaButton() {
                             });
                         }
 
-                        if(laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") != zadankaData.TestovanyDatumNarozeniText) {
+                        if(
+                            zadankaData.TestovanyDatumNarozeniText &&
+                            laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") != zadankaData.TestovanyDatumNarozeniText
+                        ) {
 
                             PocetSpatneDatumNarozeniPacientaTextElement.innerText = parseInt(PocetSpatneDatumNarozeniPacientaTextElement.innerText) + 1;
 
@@ -715,7 +824,13 @@ function getPocetChybiCisloPacientaButton() {
                             });
                         }
 
-                        if(laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase()) {
+                        if(
+                            zadankaData.TestovanyJmeno && 
+                            (
+                                !laboratorDetailResults.Jmeno ||
+                                (laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase())
+                            )
+                        ) {
 
                             PocetSpatneJmenoPacientaTextElement.innerText = parseInt(PocetSpatneJmenoPacientaTextElement.innerText) + 1;
 
@@ -728,7 +843,12 @@ function getPocetChybiCisloPacientaButton() {
                             });
                         }
 
-                        if(laboratorDetailResults.Prijmeni.trim().toUpperCase() != zadankaData.TestovanyPrijmeni.toUpperCase()) {
+                        if(
+                            zadankaData.TestovanyPrijmeni &&
+                            (
+                                !laboratorDetailResults.Prijmeni ||
+                                laboratorDetailResults.Prijmeni.trim().toUpperCase() != zadankaData.TestovanyPrijmeni.toUpperCase())
+                            ) {
 
                             PocetSpatnePrijmeniPacientaTextElement.innerText = parseInt(PocetSpatnePrijmeniPacientaTextElement.innerText) + 1;
 
@@ -758,6 +878,45 @@ function getPocetChybiCisloPacientaButton() {
     fieldGraphicElement.appendChild(aElement);
 
     return fieldGraphicElement;
+}
+
+function getRegistrCUDZadankyPacientDetailEditUrlParams(Telefon, Email, ZdravotniPojistovnaKod, Mesto, Psc) {
+    var urlParams = new URLSearchParams();
+    if(Telefon) {
+        urlParams.set("Pacient.Telefon", Telefon);
+    }
+    if(Email) {
+        urlParams.set("Pacient.Email", Email);
+    }
+    urlParams.set("Pacient.ZdravotniPojistovnaKod", ZdravotniPojistovnaKod);
+    urlParams.set("Mesto", Mesto);
+    urlParams.set("Psc", Psc);
+    return urlParams;
+}
+
+function editProfile(url, Telefon, Email, ZdravotniPojistovnaKod, Mesto, Psc, onSuccess, onError) {
+
+    var urlParams = getRegistrCUDZadankyPacientDetailEditUrlParams(
+        Telefon,
+        Email,
+        ZdravotniPojistovnaKod, 
+        Mesto, 
+        Psc
+    );
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState === XMLHttpRequest.DONE) {
+            if(xhr.status == 200) {
+                onSuccess();   
+            } else {
+                onError();
+            }
+        }
+    }
+    xhr.send(urlParams.toString());
 }
 
 function datumOdberuVysetreniToDate(Datum1Odberu) {
@@ -815,35 +974,6 @@ function editVysetreni(url, DatumNarozeni, Stat, CisloZadanky, Jmeno, Prijmeni, 
     })
     .catch(function (error) {
         console.log(error);
-    });
-}
-
-function isFoundCertificateOnProfile(ZadankaData, CisloPacienta, KoloOprav) {
-
-    return new Promise(function (resolve, reject) {
-        tryToFindProfile(ZadankaData, function(Profiles) {
-            if(Profiles.length == 1 && Profiles[0].Cislo == CisloPacienta) {
-                tryToEditForeignProfile(index, ZadankaData, Profiles[0], KoloOprav, function() {
-                    resolve(false);
-                });
-            } else if (Profiles.length > 0) {
-                tryToSloucitForeignProfilesToAnotherOne(index, ZadankaData, CisloPacienta, Profiles, KoloOprav).then(
-                    function(AlesponJedenSloucenUspesne) {
-                        if(AlesponJedenSloucenUspesne) {
-                            resolve(true);
-                        } else {
-                            resolve(false);
-                        }
-                    }
-                );
-            } 
-            // Varianty kdy to sem může skočit: 
-            //     1) Pacient je poprvé na testu a ještě nebyl založený profil
-            //     2) Bylo nalezeno více pacientů a UI vyhledání žádá o upřesnění zadaných údajů
-            else {
-                resolve(false);
-            }
-        });
     });
 }
 

@@ -21,10 +21,10 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 - neshoda státní příslušnosti na žádance a ve vyšetření (řešení: vložení státní příslušnosti do vyšetření ze žádanky)
 - neshoda jména a přijmení (typickým důvodem zkracování při zasílání dávky) (řešení: vložení jména a příjmení do vyšetření ze žádanky)
 - ve vyšetření chybí / je zadaná 0 místo čísla žádanky (řešení: dohledá podle uvedeného čísla pojištěnce žádanku a pokud odpovídá typ testu a stejný den prvního odběru vzorku, vloží číslo žádanky do vyšetření)
+- chybějící přístupové údaje (telefon, email) na profilu cizince (řešení: pokud na některém z nalezených profilů byl nalezen e-mail nebo telefon, tak bude použit, vyžadovaná data pro automatickou úpravu profilu kód zdravotní pojišťovny, město a psč bude použito v této posloupnosti: ze žádanky, z vyšetření, konstanty Praha 2, 12000 a samoplátce 300)
 
 # Pouze reportuje
 
-- chybějící přístupové údaje (telefon, email) na profilu cizince
 - ve vyšetření chybí číslo pacienta (automatické opravy zmíněné výše mohou toto opravit, automatické dohledání profilu pacienta chvilku trvá)
 - chybí certifikát na profilu (automatické opravy zmíněné výše mohou toto opravit, automatické generování certifikátu na profil pacienta chvilku trvá)
 - nebylo možné ověřit certifikát na profilu (typicky, protože existuje více profilů a tím pádem se nepodařilo otevřít ani jeden, protože systém žádá o upřesnění zadaných údajů)
