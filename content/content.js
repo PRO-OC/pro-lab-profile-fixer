@@ -651,12 +651,6 @@ function getPocetChybiCisloPacientaButton() {
             }
             const LabPripadId = "26837571";*/
 
-            // Fixme upravovat státní příslušnost na profilu:
-            //
-            // labId: 26790758 (má evidentně Ruskou i Českou státní příslušnost - kontrola prošla)
-            // mohl bych státní příslušnost ze žádanky / z vyšetření upravit i na profilu, pokud je tam jiná, ale v tom případě, že na profilu je česká a ověření z RoB neprojde a nebo tam česká není, a ověření z RoB projde
-            // https://ereg.ksrzis.cz/Registr/CUDZadanky/Zadanka/ZtotozniRob?testovanyJmeno=xxx&testovanyPrijmeni=yyy&testovanyCisloPojistence=XX&datumNarozeni=YY&stat=CZ
-
             getHtmlLaboratorDetail(element.href, function(html) {
                 var laboratorDetailResults = getInfoFromHtmlLaboratorDetail(html);
 
