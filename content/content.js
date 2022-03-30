@@ -794,7 +794,7 @@ function getPocetChybiCisloPacientaButton() {
 
                         if(
                             zadankaData.TestovanyNarodnostKod &&
-                            laboratorDetailResults.Stat.split("-")[0].trim() != zadankaData.TestovanyNarodnostKod
+                            laboratorDetailResults.Stat.split("-")[0].trim().toUpperCase() != zadankaData.TestovanyNarodnostKod.toUpperCase()
                         ) {
 
                             PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
