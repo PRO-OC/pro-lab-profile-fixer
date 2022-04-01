@@ -647,9 +647,9 @@ function getPocetChybiCisloPacientaButton() {
 
             // only testing purpose
             /*const element = {
-                href: "/Registr/ISIN/Laborator/Detail/?id=26837571"
+                href: "/Registr/ISIN/Laborator/Detail/?id=26922108"
             }
-            const LabPripadId = "26837571";*/
+            const LabPripadId = "26922108";*/
 
             getHtmlLaboratorDetail(element.href, function(html) {
                 var laboratorDetailResults = getInfoFromHtmlLaboratorDetail(html);
@@ -704,10 +704,10 @@ function getPocetChybiCisloPacientaButton() {
                                                     Mesto,
                                                     Psc,
                                                     function() {
-                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                                     },
                                                     function() {
-                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil e-mail: " + resultsProfile.Email + ", Jiný profil e-mail: " + results.EmailFromOtherProfile + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                                     }
                                                 );
                                             } else {
@@ -726,10 +726,10 @@ function getPocetChybiCisloPacientaButton() {
                                                     Mesto,
                                                     Psc,
                                                     function() {
-                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Telefon + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Telefon + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                                     },
                                                     function() {
-                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Telefon + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        addToConsole("Chybí přístupové údaje na profilu: LabPripadId: " + LabPripadId + ", " + element.href + ", Profil telefon: " + resultsProfile.Telefon + ", Jiný profil telefon: " + results.TelefonFromOtherProfile + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                                     }
                                                 );
                                             } else {
@@ -776,30 +776,14 @@ function getPocetChybiCisloPacientaButton() {
                             ) {
                                 editVysetreni(laboratorDetailResults.EditLink, null, null, zadankaData.Cislo, null, null, function(result) {
                                     if(result) {
-                                        addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                        addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                     } else {
-                                        addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                        addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.CisloZadanky + ", Zadanka: " + zadankaData.Cislo + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                     }
                                 });
                             } else {
                                 addToConsole("Chybí číslo žádanky: LabPripadId: " + LabPripadId + ", " + element.href + ", ICP: " + laboratorDetailResults.ICP);
                             }
-                        }
-
-                        if(
-                            zadankaData.TestovanyNarodnostKod &&
-                            laboratorDetailResults.Stat.split("-")[0].trim().toUpperCase() != zadankaData.TestovanyNarodnostKod.toUpperCase()
-                        ) {
-
-                            PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
-
-                            editVysetreni(laboratorDetailResults.EditLink, null, zadankaData.TestovanyNarodnostKod, null, null, null, function(result) {
-                                if(result) {
-                                    addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
-                                } else {
-                                    addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
-                                }
-                            });
                         }
 
                         if(
@@ -811,49 +795,146 @@ function getPocetChybiCisloPacientaButton() {
 
                             editVysetreni(laboratorDetailResults.EditLink, zadankaData.TestovanyDatumNarozeniText, null, null, null, null, function(result) {
                                 if(result) {
-                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + "(nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                 } else {
-                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + "(nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                 }
                             });
                         }
 
-                        if(
-                            zadankaData.TestovanyJmeno && 
-                            (
-                                !laboratorDetailResults.Jmeno ||
-                                (laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase())
-                            )
-                        ) {
+                        // 1. Ověř data z každého vyšetření s registrem obyvatel
+                        // 1.1 Vyjde to - pokud není ve vyšetření česká státní příslušnost - nastav do vyšetření státní příslušnost CZ (státní příslušnost se neověřovala, ale jméno, přijmení ano, proto není potřeba měnit)
+                        // 1.2 Nevyjde to - (pouze pokud je vyplněné čísloŽádanky, tak ->) 2. Zkus data ze žádanky podle číslaŽádanky u vyšetření ověřit s registrem obyvatel 
+                        //                - 2.1 Vyjde to - nastav do vyšetření státní příslušnost CZ a jméno (pokud se liší od toho ve vyšetření), přijmení (pokud se liší od toho ve vyšetření) 
+                        //                - 2.2 Nevyjde to - v případě, že se data na žádance liší od toho co je ve vyšetření, preferuj data ze žádanky a nastav je do vyšetření (ignoruj ale státní příslušnost na žádance CZ, pokud je na vyšetření jiná, ztotožnění neprošlo)
+                        getZtotozniRob(
+                            laboratorDetailResults.Jmeno,
+                            laboratorDetailResults.Prijmeni,
+                            laboratorDetailResults.RodneCislo,
+                            function(data) {
+                                if(data && data.ZtotozneniProvedeno) {
+                                    if(laboratorDetailResults.Stat.trim() != "CZ - Česko") {
+                                        editVysetreni(laboratorDetailResults.EditLink, null, "CZ", null, null, null, function(result) {
 
-                            PocetSpatneJmenoPacientaTextElement.innerText = parseInt(PocetSpatneJmenoPacientaTextElement.innerText) + 1;
+                                            PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
 
-                            editVysetreni(laboratorDetailResults.EditLink, null, null, null, zadankaData.TestovanyJmeno, null, function(result) {
-                                if(result) {
-                                    addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
-                                } else {
-                                    addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                            if(result) {
+                                                addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", Registr obyvatel: " + data.VysledekZprava + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                            } else {
+                                                addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", Registr obyvatel: " + data.VysledekZprava + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                            }
+                                        });
+                                    }
+                                } else if (
+                                    zadankaData.Cislo &&
+                                    zadankaData.TestovanyJmeno &&
+                                    zadankaData.TestovanyPrijmeni &&
+                                    zadankaData.TestovanyCisloPojistence
+                                ) {
+
+                                    getZtotozniRob(
+                                        zadankaData.TestovanyJmeno,
+                                        zadankaData.TestovanyPrijmeni,
+                                        zadankaData.TestovanyCisloPojistence,
+                                        function(data) {
+                                            if(data && data.ZtotozneniProvedeno) {
+                                                editVysetreni(laboratorDetailResults.EditLink, null, "CZ", null, zadankaData.TestovanyJmeno, zadankaData.TestovanyPrijmeni, function(result) {
+
+                                                    if(
+                                                        laboratorDetailResults.Stat.trim() != "CZ - Česko"
+                                                    ) {
+                                                        PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
+
+                                                        if(result) {
+                                                            addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", Registr obyvatel: " + data.VysledekZprava + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        } else {
+                                                            addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", Registr obyvatel: " + data.VysledekZprava + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        }
+                                                    }
+
+                                                    if(
+                                                        laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase()
+                                                    ) {
+                                                        PocetSpatneJmenoPacientaTextElement.innerText = parseInt(PocetSpatneJmenoPacientaTextElement.innerText) + 1;
+
+                                                        if(result) {
+                                                            addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        } else {
+                                                            addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        }
+                                                    }
+
+                                                    if(
+                                                        laboratorDetailResults.Prijmeni.trim().toUpperCase() != zadankaData.TestovanyPrijmeni.toUpperCase()
+                                                    ) {
+                                                        PocetSpatnePrijmeniPacientaTextElement.innerText = parseInt(PocetSpatnePrijmeniPacientaTextElement.innerText) + 1;
+
+                                                        if(result) {
+                                                            addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        } else {
+                                                            addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        }
+                                                    }
+                                                });
+                                            } else {
+
+                                                if(
+                                                    zadankaData.TestovanyNarodnostKod &&
+                                                    zadankaData.TestovanyNarodnostKod.toUpperCase() != "CZ" &&
+                                                    laboratorDetailResults.Stat &&
+                                                    laboratorDetailResults.Stat.split("-")[0].trim().toUpperCase() != zadankaData.TestovanyNarodnostKod.toUpperCase()
+                                                ) {
+                                                    PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
+
+                                                    editVysetreni(laboratorDetailResults.EditLink, null, zadankaData.TestovanyNarodnostKod.toUpperCase(), null, null, null, function(result) {
+                                                        if(result) {
+                                                            addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod.toUpperCase() + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        } else {
+                                                            addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod.toUpperCase() + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        }
+                                                    });
+                                                }
+
+                                                if(
+                                                    zadankaData.TestovanyJmeno && 
+                                                    (
+                                                        !laboratorDetailResults.Jmeno ||
+                                                        (laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase())
+                                                    )
+                                                ) {
+
+                                                    PocetSpatneJmenoPacientaTextElement.innerText = parseInt(PocetSpatneJmenoPacientaTextElement.innerText) + 1;
+
+                                                    editVysetreni(laboratorDetailResults.EditLink, null, null, null, zadankaData.TestovanyJmeno, null, function(result) {
+                                                        if(result) {
+                                                            addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        } else {
+                                                            addToConsole("Špatné jméno: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Jmeno.trim() + ", Zadanka: " + zadankaData.TestovanyJmeno + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        }
+                                                    });
+                                                }
+
+                                                if(
+                                                    zadankaData.TestovanyPrijmeni &&
+                                                    (
+                                                        !laboratorDetailResults.Prijmeni ||
+                                                        laboratorDetailResults.Prijmeni.trim().toUpperCase() != zadankaData.TestovanyPrijmeni.toUpperCase())
+                                                    ) {
+                            
+                                                    PocetSpatnePrijmeniPacientaTextElement.innerText = parseInt(PocetSpatnePrijmeniPacientaTextElement.innerText) + 1;
+                            
+                                                    editVysetreni(laboratorDetailResults.EditLink, null, null, null, null, zadankaData.TestovanyPrijmeni, function(result) {
+                                                        if(result) {
+                                                            addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                                        } else {
+                                                            addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
                                 }
-                            });
-                        }
-
-                        if(
-                            zadankaData.TestovanyPrijmeni &&
-                            (
-                                !laboratorDetailResults.Prijmeni ||
-                                laboratorDetailResults.Prijmeni.trim().toUpperCase() != zadankaData.TestovanyPrijmeni.toUpperCase())
-                            ) {
-
-                            PocetSpatnePrijmeniPacientaTextElement.innerText = parseInt(PocetSpatnePrijmeniPacientaTextElement.innerText) + 1;
-
-                            editVysetreni(laboratorDetailResults.EditLink, null, null, null, null, zadankaData.TestovanyPrijmeni, function(result) {
-                                if(result) {
-                                    addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
-                                } else {
-                                    addToConsole("Špatné přijmení: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Prijmeni.trim() + ", Zadanka: " + zadankaData.TestovanyPrijmeni + ", ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
-                                }
-                            });
-                        }
+                        });
 
                         if(laboratorDetailResults.Vysledek.trim() == "Pozitivní") {
                             PocetPozitivnichTextElement.innerText = parseInt(PocetPozitivnichTextElement.innerText) + 1;
@@ -872,6 +953,70 @@ function getPocetChybiCisloPacientaButton() {
     fieldGraphicElement.appendChild(aElement);
 
     return fieldGraphicElement;
+}
+
+function getZtotozniRob(jmeno, prijmeni, rodneCislo, callback) {
+    var url = getZtotozniRobUrl();
+
+    var urlParams = getZtotozniRobUrlParams(
+        jmeno,
+        prijmeni,
+        rodneCislo,
+        "CZ"
+    );
+
+    fetch(url + "?" + urlParams.toString(), {
+        "headers": {
+            "accept": "*/*",
+            "accept-language": "cs-CZ,cs;q=0.9,en;q=0.8",
+            "request-context": "appId=cid-v1:f78f5e6e-1274-4f71-b5e0-231e83f42d14",
+            "request-id": "|tnP4+.xJ5D1",
+            "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Google Chrome\";v=\"100\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Linux\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "x-requested-with": "XMLHttpRequest"
+        },
+        "referrer": "https://ereg.ksrzis.cz/Registr/CUDZadanky/Zadanka",
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "body": null,
+        "method": "GET",
+        "mode": "cors",
+        "credentials": "include"
+    })
+    .then(function(response) {
+        if (response.status == 200) {
+            try {
+                JSON.parse(response);
+                response.json().then(function(data) {
+                    callback(data)
+                });
+            } catch(err) {
+                console.log(err);
+                callback(null);
+            }
+        }
+    })
+    .catch(function (err) {
+        console.log(err);
+        callback(null);
+    });
+}
+
+function getZtotozniRobUrl() {
+    return "/Registr/CUDZadanky/Zadanka/ZtotozniRob";
+}
+
+function getZtotozniRobUrlParams(jmeno, prijmeni, cisloPojistence, statKod) {
+    var urlParams = new URLSearchParams();
+    urlParams.set("testovanyJmeno", jmeno);
+    urlParams.set("testovanyPrijmeni", prijmeni);
+    urlParams.set("testovanyCisloPojistence", cisloPojistence);
+    urlParams.set("datumNarozeni", "");
+    urlParams.set("stat", statKod);
+    return urlParams;
 }
 
 function getRegistrCUDZadankyPacientDetailEditUrlParams(Telefon, Email, ZdravotniPojistovnaKod, Mesto, Psc) {
@@ -963,11 +1108,12 @@ function editVysetreni(url, DatumNarozeni, Stat, CisloZadanky, Jmeno, Prijmeni, 
                 });
             });
         } else {
-            return;
+            callback(false);
         }
     })
     .catch(function (error) {
         console.log(error);
+        callback(false);
     });
 }
 
