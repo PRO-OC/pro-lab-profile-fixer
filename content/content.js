@@ -795,9 +795,9 @@ function getPocetChybiCisloPacientaButton() {
 
                             editVysetreni(laboratorDetailResults.EditLink, zadankaData.TestovanyDatumNarozeniText, null, null, null, null, function(result) {
                                 if(result) {
-                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + "(nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
+                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: úspěšná.");
                                 } else {
-                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + "(nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
+                                    addToConsole("Špatné datum narození: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.DatumNarozeni.replaceAll(" ", "") + ", Zadanka: " + zadankaData.TestovanyDatumNarozeniText.replaceAll(" ", "") + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                 }
                             });
                         }
