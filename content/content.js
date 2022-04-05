@@ -802,7 +802,7 @@ function ztotozniZROB(laboratorDetailResults, zadankaData, element, LabPripadId,
         laboratorDetailResults.RodneCislo,
         function(data) {
             if(data && data.ZtotozneniProvedeno) {
-                if(laboratorDetailResults.Stat.trim() != "CZ - Česko") {
+                /*if(laboratorDetailResults.Stat.trim() != "CZ - Česko") {
                     editVysetreni(laboratorDetailResults.EditLink, null, "CZ", null, null, null, function(result) {
 
                         PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
@@ -817,23 +817,24 @@ function ztotozniZROB(laboratorDetailResults, zadankaData, element, LabPripadId,
                     });
                 } else {
                     callback();
-                }
+                }*/
+                callback();
             } else if (
                 zadankaData.Cislo &&
                 zadankaData.TestovanyJmeno &&
                 zadankaData.TestovanyPrijmeni &&
                 zadankaData.TestovanyCisloPojistence
             ) {
-
                 getZtotozniRob(
                     zadankaData.TestovanyJmeno,
                     zadankaData.TestovanyPrijmeni,
                     zadankaData.TestovanyCisloPojistence,
                     function(data) {
                         if(data && data.ZtotozneniProvedeno) {
-                            editVysetreni(laboratorDetailResults.EditLink, null, "CZ", null, zadankaData.TestovanyJmeno, zadankaData.TestovanyPrijmeni, function(result) {
+                            //editVysetreni(laboratorDetailResults.EditLink, null, "CZ", null, zadankaData.TestovanyJmeno, zadankaData.TestovanyPrijmeni, function(result) {
+                            editVysetreni(laboratorDetailResults.EditLink, null, null, null, zadankaData.TestovanyJmeno, zadankaData.TestovanyPrijmeni, function(result) {
 
-                                if(
+                                /*if(
                                     laboratorDetailResults.Stat.trim() != "CZ - Česko"
                                 ) {
                                     PocetSpatnaStatniPrislusnostTextElement.innerText = parseInt(PocetSpatnaStatniPrislusnostTextElement.innerText) + 1;
@@ -843,7 +844,7 @@ function ztotozniZROB(laboratorDetailResults, zadankaData, element, LabPripadId,
                                     } else {
                                         addToConsole("Špatná státní příslušnost: LabPripadId: " + LabPripadId + ", " + element.href + ", Vysetreni: " + laboratorDetailResults.Stat.split("-")[0].trim() + ", Zadanka: " + zadankaData.TestovanyNarodnostKod + ", Registr obyvatel: " + data.VysledekZprava + " (nastavováno), ICP: " + laboratorDetailResults.ICP + ", Oprava: neúspěšná.");
                                     }
-                                }
+                                }*/
 
                                 if(
                                     laboratorDetailResults.Jmeno.trim().toUpperCase() != zadankaData.TestovanyJmeno.toUpperCase()
@@ -952,8 +953,7 @@ async function tryFixAllVysetreni(aElement) {
     aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
     alert("Bude probíhat načítání všech vyšetření a také automatické opravy.");
 
-    while(vysetreniDetailsAElements != vysetreniDetailsAElements.length - 1) {
-    //vysetreniDetailsAElements.forEach(function (element) {
+    while(vysetreniDetailsIndex != vysetreniDetailsAElements.length) {
 
         var element = vysetreniDetailsAElements[vysetreniDetailsIndex];
 
@@ -968,7 +968,7 @@ async function tryFixAllVysetreni(aElement) {
         aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
 
         if(vysetreniDetailsIndex == vysetreniDetailsAElements.length) {
-            vysetreniDetailsAElements.innerText = "Znovu načti a oprav";
+            aElement.innerText = "Znovu načti a oprav";
             alert("Načítání dokončeno.");
         }
     }
