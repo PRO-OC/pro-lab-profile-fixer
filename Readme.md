@@ -12,7 +12,7 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 
 # Použití
 
-- je nutné být přihlášen do modulu Covid-19 s rolí Vakcinace (kvůli datům z profilu)
+- je nutné být přihlášen do modulu Covid-19 (kvůli datům z profilu)
 - je nutné být přihlášen do registru Žádanky Covid-19 (kvůli datům ze žádanky)
 
 # Reportuje a zároveň automaticky provádí opravu
