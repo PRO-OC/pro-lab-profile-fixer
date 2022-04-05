@@ -647,9 +647,9 @@ function getPocetChybiCisloPacientaButton() {
 
             // only testing purpose
             /*const element = {
-                href: "/Registr/ISIN/Laborator/Detail/?id=26922108"
+                href: "/Registr/ISIN/Laborator/Detail/?id=27010802"
             }
-            const LabPripadId = "26922108";*/
+            const LabPripadId = "27010802";*/
 
             getHtmlLaboratorDetail(element.href, function(html) {
                 var laboratorDetailResults = getInfoFromHtmlLaboratorDetail(html);
@@ -967,31 +967,15 @@ function getZtotozniRob(jmeno, prijmeni, rodneCislo, callback) {
 
     fetch(url + "?" + urlParams.toString(), {
         "headers": {
-            "accept": "*/*",
-            "accept-language": "cs-CZ,cs;q=0.9,en;q=0.8",
-            "request-context": "appId=cid-v1:f78f5e6e-1274-4f71-b5e0-231e83f42d14",
-            "request-id": "|tnP4+.xJ5D1",
-            "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Google Chrome\";v=\"100\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Linux\"",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
             "x-requested-with": "XMLHttpRequest"
-        },
-        "referrer": "https://ereg.ksrzis.cz/Registr/CUDZadanky/Zadanka",
-        "referrerPolicy": "strict-origin-when-cross-origin",
-        "body": null,
-        "method": "GET",
-        "mode": "cors",
-        "credentials": "include"
+        }
     })
     .then(function(response) {
         if (response.status == 200) {
             try {
-                JSON.parse(response);
-                response.json().then(function(data) {
-                    callback(data)
+                response.text().then(function(data) {
+                    var json = JSON.parse(data);
+                    callback(json);
                 });
             } catch(err) {
                 console.log(err);
