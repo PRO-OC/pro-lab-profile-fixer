@@ -12,10 +12,10 @@ The extension use cookie of Test requests Covid-19 register where is stored sign
 
 The extension use data only for added functionalities described in description, mainly automatically fixing problems in the registries. 
 
-The extension all changes what were done in the registries during using prints to the HTML element text area. The HTML element text area is cleaned when is browsers page refreshed. Data are not stored. The extension prints texts like problem automatically fixed, fixing problem failed (network, unlogged user etc.) or was found discrepancy which can not be automatically fixed to look etc. Temporary printed text to HTML element text are may contains private information about patients. The HTML element is located inside register page protected by authentication & autorization sign in process.
+The extension all changes what were done in the registries during using prints to the HTML element text area. The HTML element text area is cleaned when is browsers page refreshed. Data are not stored. The extension prints texts like problem automatically fixed, fixing problem failed (network, unlogged user etc.) or was found discrepancy which can not be automatically fixed to look etc. HTML element is located inside register page protected by authentication & autorization sign in process. So temporary printed text to HTML element text may contains private information about patients.
 
 ## 4. Security
 
-Extension works in registries where user has to **manually** sign in himself. The extension only works with data as is described in description, otherwise are not used, stored, processed, send.. etc.
+The extension works in registries where user has to **manually** sign in himself. The extension only works with data as is described in description, otherwise are not used, stored, processed, send.. etc.
 
-The extension for work uses only API requests officiality provided by registries. Send nothing to 3rd parties. The extension provides logic for automatically fixing how are official requests of registries used.
+The extension for work uses only API requests officiality provided by registries. Send or receive nothing from/to 3rd parties. The extension provides logic for automatically fixing problems, in other words how are official requests provided by registries used.
