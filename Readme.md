@@ -5,6 +5,7 @@
 Rozšíření přidává do ISIN kontrolu všech vyšetření, reportuje nalezené nesrovnalosti a provádí jejich částečnou automatickou opravu.
 
 ![Preview](preview/nahled.png)
+![Preview](preview/nahled_2.jpg)
 
 ## Zásady ochrany osobních údajů
 
