@@ -46,7 +46,7 @@ function getZadankaData(cisloZadanky, cisloPojistence, callback) {
         var heslo = cookieParams.get("heslo");
 
         if(!kodOsoby || !heslo) {
-          return;
+          callback(null);
         }
 
         getRegistrCUDOvereniCisloZadankyUrl(function(url) {
@@ -65,11 +65,12 @@ function getZadankaData(cisloZadanky, cisloPojistence, callback) {
                         callback(json);
                     });
                 } else {
-                    return;
+                    callback(null);
                 }
             })
             .catch(function (error) {
                 console.log(error);
+                callback(null);
             });
         });
     });

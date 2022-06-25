@@ -611,6 +611,7 @@ function tryFindProfileWithSpecificCertElement(ZadankaData, datumTestu, callback
     });
 }
 
+// resolve(null) - je potřeba být přihlášený do Žádanky Covid-19
 // resolve(false) - nepodaří se získat data žádanky
 // resolve(true)
 function tryFixVysetreni(element) {
@@ -630,8 +631,7 @@ function tryFixVysetreni(element) {
                 }
             }, function (zadankaData) {
                 if(!zadankaData) {
-                    alert("Je potřeba být přihlášený do registru Žadanky Covid-19.");
-                    resolve(false);
+                    resolve(null);
                 } else {
 
                     if(
@@ -962,7 +962,13 @@ async function tryFixAllVysetreni(aElement) {
             href: "/Registr/ISIN/Laborator/Detail/?id=27010802"
         }*/
 
-        await tryFixVysetreni(element);
+        var result = await tryFixVysetreni(element);
+
+        if(result == null) {
+            aElement.innerText = "Načti a oprav (Je potřeba být přihlášený do registru Žádanky Covid-19)";
+            alert("Je potřeba být přihlášený do registru Žadanky Covid-19.");
+            return;
+        }
 
         vysetreniDetailsIndex++;
         aElement.innerText = "Probíhá načítání vyšetřeních a opravy. Pro úspěšné dokončení nezavírejte tuto stránku. Počet zkontrolovaných vyšetření: " + vysetreniDetailsIndex + "/" + vysetreniDetailsAElements.length + ".";
